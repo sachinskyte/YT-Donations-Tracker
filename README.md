@@ -1,20 +1,20 @@
 # YouTube Donation Analyzer
 
-A Python tool for analyzing donations mentioned in YouTube video comments. This tool efficiently processes comments to identify and track donation amounts in USD and INR currencies.
+A Python tool that analyzes YouTube video comments to identify and track donation amounts. It supports detection of donations in USD ($) and INR (₹) currencies, with automatic currency conversion to USD.
 
 ## Features
 
-- Fast parallel comment processing
-- Configurable batch processing with timeouts
-- Support for USD ($) and INR (₹) donations
-- Currency conversion to USD
-- Progress tracking and detailed logging
-- Customizable currency patterns and validation rules
+- 🚀 Fast parallel comment processing with configurable batch sizes
+- 💰 Accurate detection of USD ($) and INR (₹) donations
+- 💱 Automatic currency conversion to USD using real-time exchange rates
+- 📊 Detailed progress tracking and logging
+- ⚡ Efficient processing with timeout protection
+- ⚙️ Fully configurable through JSON settings
 
 ## Requirements
 
 - Python 3.8+
-- Dependencies listed in `requirements.txt`
+- Internet connection for YouTube access and exchange rates
 
 ## Installation
 
@@ -29,62 +29,87 @@ cd youtube-donation-analyzer
 pip install -r requirements.txt
 ```
 
-## Configuration
-
-Edit `src/config.json` to customize:
-
-- `max_workers`: Number of parallel workers (default: 4)
-- `batch_size`: Comments processed per batch (default: 1000)
-- `batch_timeout`: Timeout for batch processing in seconds (default: 10)
-- `processing_timeout`: Timeout for individual comment processing in seconds (default: 5)
-- `max_usd_amount`: Maximum valid USD donation amount (default: 10000)
-- `max_inr_amount`: Maximum valid INR donation amount (default: 100000)
-- `currency_patterns`: Regular expressions for detecting donations
-
 ## Usage
 
-1. Import the DonationAnalyzer class:
+### Command Line
+```bash
+python src/donation_analyzer.py "https://www.youtube.com/watch?v=VIDEO_ID"
+```
+
+### As a Module
 ```python
 from donation_analyzer import DonationAnalyzer
-```
 
-2. Create an analyzer instance and process a video:
-```python
+# Initialize analyzer
 analyzer = DonationAnalyzer()
-results = analyzer.analyze_video("VIDEO_ID")
-print(results)
+
+# Analyze video
+analyzer.analyze_video("https://www.youtube.com/watch?v=VIDEO_ID")
 ```
 
-## Example Output
+## Configuration
 
-```python
+The tool is configurable through `src/config.json`:
+
+```json
 {
-    'total_comments': 5000,
-    'donations': {
-        'USD': {'total': 150.0, 'count': 3},
-        'INR': {'total': 1000.0, 'count': 5}
-    },
-    'total_usd_equivalent': 162.50,
-    'processing_time': '2.5 seconds'
+    "max_workers": 4,          // Number of parallel workers
+    "batch_size": 1000,        // Comments per batch
+    "batch_timeout": 10,       // Batch processing timeout (seconds)
+    "processing_timeout": 5,   // Individual comment timeout (seconds)
+    "max_usd_amount": 10000,   // Maximum valid USD donation
+    "max_inr_amount": 100000,  // Maximum valid INR donation
 }
 ```
 
+## Output Example
+
+```
+Fetching current exchange rates...
+Fetching comments from: https://www.youtube.com/watch?v=VIDEO_ID
+Processed 1000 comments... (125.3 comments/sec)
+Processed 2000 comments... (130.1 comments/sec)
+
+Extracted donations:
+$50.00 from User123 (original: donated $50)
+₹1000.00 from User456 (original: ₹1000 sent)
+
+Totals by currency:
+USD: $50.00
+INR: ₹1000.00
+  = $12.05 USD
+
+Total donations in USD: $62.05
+```
+
+## Features in Detail
+
+### Donation Detection
+- Recognizes various donation phrases ("donated", "sent", "giving", etc.)
+- Supports both currency symbol before and after amount
+- Validates amounts to filter out unrealistic donations
+- Handles decimal values and whole numbers
+
+### Performance
+- Parallel processing of comment batches
+- Configurable timeouts to prevent hanging
+- Progress tracking with processing speed
+- Graceful handling of interruptions
+
+### Currency Support
+- USD ($) with automatic symbol detection
+- INR (₹) with support for both ₹ symbol and "Rs." notation
+- Real-time currency conversion using exchange rates API
+
 ## Error Handling
 
-The tool includes robust error handling for:
-- Network timeouts
-- Invalid video IDs
+The tool includes comprehensive error handling for:
+- Network timeouts and connection issues
+- Invalid video URLs
 - Comment processing errors
-- Currency conversion failures
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+- Exchange rate API failures
+- Invalid donation formats
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License. 
