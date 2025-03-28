@@ -1,0 +1,13 @@
+{
+    "max_workers": 4,
+    "batch_size": 1000,
+    "batch_timeout": 10,
+    "processing_timeout": 5,
+    "max_usd_amount": 10000,
+    "max_inr_amount": 100000,
+    "exchange_rate_api": "https://open.er-api.com/v6/latest/USD",
+    "currency_patterns": {
+        "(?:donated?|sent|giving|gave|sending|paid|tipped|supporting|here\\'s)\\s+\\$(\\d+(?:\\.\\d{2})?)|(?<=^|\\s)\\$(\\d+(?:\\.\\d{2})?)(?=\\s|$)": ["USD", 10000, "$"],
+        "(?:donated?|sent|giving|gave|sending|paid|tipped|supporting|here\\'s)\\s+(?:rs\\.|₹)(\\d+(?:\\.\\d{2})?)|(?<=^|\\s)(?:rs\\.|₹)(\\d+(?:\\.\\d{2})?)(?=\\s|$)": ["INR", 100000, "₹"]
+    }
+} 
